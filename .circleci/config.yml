@@ -22,9 +22,9 @@ jobs:
           command: |
             VERSION=$(git log --decorate --pretty=oneline @ | egrep 'v[0-9\.]+[A-Za-z0-9\.-]*' -o | cut -d ":" -f2 | head -1 | sed -e 's/^ *//')
             make opera
-            ls -lah ./build/bin
+            ls -lah ./build
             echo uploading to $BINARY_DIR/opera-$VERSION-$CIRCLE_SHA1
-            scp -o StrictHostKeyChecking=no ./build/bin/opera $SSH_USERNAME@$SSH_IP:$BINARY_DIR/opera-$VERSION-$CIRCLE_SHA1
+            scp -o StrictHostKeyChecking=no ./build/opera $SSH_USERNAME@$SSH_IP:$BINARY_DIR/opera-$VERSION-$CIRCLE_SHA1
             cd ..
       - persist_to_workspace:
           root: '.'
