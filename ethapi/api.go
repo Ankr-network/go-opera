@@ -2226,13 +2226,13 @@ func (s *PublicBlockChainAPI) GetFullBlockByNumber(ctx context.Context, number r
 		}
 		txByHash[tx.Hash] = tx
 	}
-	response["receipts"], err = s.getBlockReceipts(ctx, txByHash, block)
+	response["receipts"], err = s.getBlockReceipts(ctx, txByHash, block.EthBlock())
 	return response, err
 }
 
 func (s *PublicBlockChainAPI) getBlockReceipts(ctx context.Context, txByHash map[common.Hash]*RPCTransaction, block *types.Block) ([]map[string]interface{}, error) {
 	// get all block receipts from database
-	receipts, err := s.b.GetReceipts(ctx, block.Hash())
+	receipts, err := s.b.GetReceiptsByNumber(ctx, rpc.BlockNumber(block.Number().Uint64()))
 	if err != nil {
 		return nil, err
 	}
@@ -2245,7 +2245,7 @@ func (s *PublicBlockChainAPI) getBlockReceipts(ctx context.Context, txByHash map
 			continue
 		}
 		fields := map[string]interface{}{
-			"blockHash":         block.Hash(),
+			"blockHash":         receipt.BlockHash.Hex(),
 			"blockNumber":       "0x" + block.Number().Text(16),
 			"transactionHash":   tx.Hash,
 			"transactionIndex":  tx.TransactionIndex,
